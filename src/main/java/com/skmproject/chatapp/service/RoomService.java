@@ -13,4 +13,6 @@ public interface RoomService {
 	public boolean existsRoom(String roomId);
 	
 	public Room createRoom(CreateRoom createRoom) throws RoomAlreadyExistsException;
+
+	public Room getRoom(String roomId);
 }
