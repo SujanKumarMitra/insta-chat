@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 
 import com.skmproject.chatapp.dao.RoomDao;
 import com.skmproject.chatapp.exception.RoomAlreadyExistsException;
+import com.skmproject.chatapp.exception.RoomNotFoundException;
 import com.skmproject.chatapp.model.CreateRoom;
 import com.skmproject.chatapp.model.DefaultRoom;
 import com.skmproject.chatapp.model.Room;
@@ -24,8 +25,8 @@ public class DefaultRoomService implements RoomService {
 	private RandomGenerator randomGenerator;
 
 	@Override
-	public boolean existsRoom(String roomId) {
-		return roomDao.existsByRoomId(roomId);
+	public Room getRoom(String roomId) throws RoomNotFoundException {
+		return roomDao.getRoom(roomId);
 	}
 
 	@Override
@@ -36,7 +37,7 @@ public class DefaultRoomService implements RoomService {
 			roomId = randomGenerator.generateRandom();
 		} else {
 			roomId = createRoom.getRoomId();
-			if (roomDao.existsByRoomId(roomId)) {
+			if (roomDao.existsRoom(roomId)) {
 				throw new RoomAlreadyExistsException(roomId + " already exists!");
 			}
 		}
