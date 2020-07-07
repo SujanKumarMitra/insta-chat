@@ -34,8 +34,4 @@ public class SimpleRandomGenerator implements RandomGenerator {
 		return str;
 	}
 
-	public static void main(String[] args) {
-		System.out.println(new SimpleRandomGenerator().generateRandom());
-	}
-
 }
