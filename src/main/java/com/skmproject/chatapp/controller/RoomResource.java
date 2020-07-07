@@ -28,19 +28,15 @@ public class RoomResource {
 	@PostMapping("/room")
 	public ResponseEntity<Room> createRoom(@RequestBody CreateRoom payload) {
 		Room room = roomService.createRoom(payload);
-		return ResponseEntity
-				.status(HttpStatus.CREATED)
-				.body(room);
+		return ResponseEntity.status(HttpStatus.CREATED).body(room);
 	}
 
 	@GetMapping("/room/{roomId}")
-	public ResponseEntity<Void> existsRoom(@PathVariable("roomId") String roomId) {
-		boolean result = roomService.existsRoom(roomId);
-		if(result) {
-			return ResponseEntity.status(HttpStatus.FOUND).build();
-		} else {
-			return ResponseEntity.notFound().build();			
-		}
+	public ResponseEntity<Room> getRoom(@PathVariable("roomId") String roomId) {
+		Room room = roomService.getRoom(roomId);
+		return ResponseEntity
+				.status(HttpStatus.FOUND)
+				.body(room);
 	}
 
 }
