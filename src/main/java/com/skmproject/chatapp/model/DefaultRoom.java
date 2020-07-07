@@ -1,12 +1,29 @@
 package com.skmproject.chatapp.model;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
 /**
  * @author Sujan Kumar Mitra
  * @since 2020-07-07
  */
+@Entity
+@Table(name = "rooms")
 public class DefaultRoom implements Room {
+
+	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	@Column(name = "id")
+	int id;
 	
+	@Column(name = "room_id",unique = true)
 	public String roomId;
+
+	@Column(name = "password")
 	public String password;
 
 	/**
@@ -23,8 +40,21 @@ public class DefaultRoom implements Room {
 		this.roomId = roomId;
 		this.password = password;
 	}
+	
 
+	/**
+	 * @return the id
+	 */
+	public int getId() {
+		return id;
+	}
 
+	/**
+	 * @param id the id to set
+	 */
+	public void setId(int id) {
+		this.id = id;
+	}
 
 	/**
 	 * @return the roomId
