@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Insta Chat</title>
+
+	<!-- CSS -->
+	<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Roboto:400,100,300,500">
+	<link rel="stylesheet" href="../static/bootstrap/css/bootstrap.css" th:href="@{/bootstrap/css/bootstrap.css}">
+	<link rel="stylesheet" href="../static/font-awesome/css/font-awesome.min.css" th:href="@{/font-awesome/css/font-awesome.min.css}">
+	<link rel="stylesheet" href="../static/css/form-elements.css" th:href="@{/css/form-elements.css}">
+	<link rel="stylesheet" href="../static/css/style.css" th:href="@{/css/style.css}">
+
+	<!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+	<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+	<!--[if lt IE 9]>
+            <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+            <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+        <![endif]-->
+</head>
+
+<body>
+
+	<!-- Top content -->
+	<div class="top-content">
+
+		<div class="inner-bg">
+			<div class="container">
+
+				<div class="row">
+					<div class="col-sm-12 col-sm-offset-2 text">
+						<h1><strong>Insta Chat</strong></h1>
+						<div class="description">
+							<p>
+								Chat with other users by creating and joining rooms.
+							</p>
+						</div>
+					</div>
+				</div>
+
+				<div class="row">
+					<div class="col-md-5">
+
+						<div class="form-box">
+							<div class="form-top">
+								<div class="form-top-left">
+									<h3>Create Room</h3>
+									<p>Create a Room to chat</p>
+								</div>
+								<div class="form-top-right">
+									<i class="fa fa-plus-square"></i>
+								</div>
+							</div>
+							<div class="form-bottom">
+								<form role="form" action="#" method="post" class="login-form">
+									<div class="form-group">
+										<label class="sr-only" for="create-form-room_id">Room ID</label>
+										<input type="text" name="create-form-room_id" placeholder="Enter Room ID"
+											class="form-username form-control" id="create-form-room_id">
+										<div class="text-center bg-success text-white" id="room_id-result-success" hidden="true">Available
+										</div>
+										<div class="text-center bg-danger text-white" id="room_id-result-danger" hidden="true"> Not Available
+										</div>
+									</div>
+									<div class="form-group">
+										<label class="sr-only" for="create-form-password">Password</label>
+										<input type="password" name="create-form-password" placeholder="Enter Password"
+											class="form-password form-control" id="create-form-room_password">
+									</div>
+									<div class="form-check">
+										<input type="checkbox" class="form-check-input" id="create-form-auto_generate">
+										<label class="form-check-label text-white" for="create-form-auto_generate">Auto
+											Generate ID</label>
+									</div>
+									<button type="submit" class="btn" id="room_create_button">Create</button>
+								</form>
+								<br/>
+								<div id="result" hidden="true" class="alert alert-success text-center" role="alert">
+									<div id="success_message">Room Created!!</div>
+									<div>Room ID: <span id="new_room_id">id</span></div>
+									<div>Room Password: <span id="new_room_password">pass</span></div>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<div class="col-sm-1 middle-border"></div>
+					<div class="col-sm-1"></div>
+
+					<div class="col-md-5">
+
+						<div class="form-box">
+							<div class="form-top">
+								<div class="form-top-left">
+									<h3>Join Room</h3>
+									<p>Join a Room to chat:</p>
+								</div>
+								<div class="form-top-right">
+									<i class="fa fa-sign-in"></i>
+								</div>
+							</div>
+							<div class="form-bottom">
+								<form role="form" action="" method="post" class="registration-form">
+									<div class="form-group">
+										<label class="sr-only" for="form-room-id">Room Id</label>
+										<input type="text" name="form-room-id" placeholder="Enter Room ID"
+											class="form-first-name form-control" id="form-first-name">
+									</div>
+									<div class="form-group">
+										<label class="sr-only" for="form-last-name">Password</label>
+										<input type="password" name="form-last-name" placeholder="Enter Password"
+											class="form-last-name form-control" id="form-last-name">
+									</div>
+									<div class="form-group">
+										<label class="sr-only" for="form-name">Join As</label>
+										<input type="text" name="form-name" placeholder="Join As"
+											class="form-last-name form-control" id="form-name">
+									</div>
+									<button type="submit" class="btn">Join</button>
+								</form>
+							</div>
+						</div>
+
+					</div>
+				</div>
+
+			</div>
+		</div>
+
+	</div>
+
+	<!-- Footer -->
+	<footer>
+		<div class="container">
+			<div class="row">
+				<div class="col-sm-12 col-sm-offset-2">
+					<div class="footer-border"></div>
+					<p>Built with Spring WebSocket, STOMP <i class="fa fa-heart"></i></p>
+				</div>
+			</div>
+		</div>
+	</footer>
+
+	<!-- Javascript -->
+	<!-- <script src="assets/js/jquery-1.11.1.min.js"></script>
+	<script src="assets/bootstrap/js/bootstrap.min.js"></script>
+	<script src="assets/js/jquery.backstretch.min.js"></script>
+	<script src="assets/js/scripts.js"></script> -->
+
+	<script src="../static/js/jquery-1.11.1.min.js" th:src="@{/js/jquery-1.11.1.min.js}"></script>
+	<script src="../static/bootstrap/js/bootstrap.min.js" th:src="@{/bootstrap/js/bootstrap.min.js}"></script>
+	<script src="../static/js/jquery.backstretch.min.js" th:src="@{/js/jquery.backstretch.min.js}"></script>
+	<script src="../static/js/scripts.js" th:src="@{/js/scripts.js}"></script>
+	<script src="../static/js/index.js" th:src="@{/js/index.js}"></script>
+
+	<!--[if lt IE 10]>
+            <script src="assets/js/placeholder.js"></script>
+        <![endif]-->
+
+</body>
+
+</html>
