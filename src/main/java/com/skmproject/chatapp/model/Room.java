@@ -6,7 +6,7 @@ package com.skmproject.chatapp.model;
  */
 public interface Room {
 	
-	String getRoomId();
+	String getId();
 	
 	String getPassword();
 }

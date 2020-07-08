@@ -1,11 +1,12 @@
 package com.skmproject.chatapp.model;
 
+import java.io.Serializable;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 /**
  * @author Sujan Kumar Mitra
@@ -13,15 +14,17 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name = "rooms")
-public class DefaultRoom implements Room {
+public class DefaultRoom implements Room,Serializable {
+	
+	/**
+	 * 
+	 */
+	@Transient
+	private static final long serialVersionUID = 8622193784528944845L;
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	@Column(name = "id")
-	int id;
-	
 	@Column(name = "room_id",unique = true)
-	public String roomId;
+	public String id;
 
 	@Column(name = "password")
 	public String password;
@@ -36,32 +39,23 @@ public class DefaultRoom implements Room {
 	 * @param roomId the roomId to set
 	 * @param password the password to set
 	 */
-	public DefaultRoom(String roomId, String password) {
-		this.roomId = roomId;
+	public DefaultRoom(String id, String password) {
+		this.id = id;
 		this.password = password;
 	}
-	
 
 	/**
 	 * @return the id
 	 */
-	public int getId() {
+	public String getId() {
 		return id;
 	}
 
 	/**
 	 * @param id the id to set
 	 */
-	public void setId(int id) {
+	public void setId(String id) {
 		this.id = id;
-	}
-
-	/**
-	 * @return the roomId
-	 */
-	@Override
-	public String getRoomId() {
-		return roomId;
 	}
 
 	/**
@@ -70,13 +64,6 @@ public class DefaultRoom implements Room {
 	@Override
 	public String getPassword() {
 		return password;
-	}
-	
-	/**
-	 * @param roomId the roomId to set
-	 */
-	public void setRoomId(String roomId) {
-		this.roomId = roomId;
 	}
 	
 	/**
