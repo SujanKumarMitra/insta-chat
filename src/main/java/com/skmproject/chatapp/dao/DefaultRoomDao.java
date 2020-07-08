@@ -20,12 +20,12 @@ public class DefaultRoomDao implements RoomDao {
 
 	@Override
 	public boolean existsRoom(String roomId) {
-		return roomRepository.existsByRoomId(roomId);
+		return roomRepository.existsById(roomId);
 	}
 
 	@Override
 	public Room getRoom(String roomId) {
-		return roomRepository.findByRoomId(roomId)
+		return roomRepository.findById(roomId)
 				.orElseThrow(() -> new RoomNotFoundException("room not found with id " + roomId));
 	}
 
@@ -33,6 +33,11 @@ public class DefaultRoomDao implements RoomDao {
 	public Room save(Room room) {
 		DefaultRoom roomToSave = (DefaultRoom) room;
 		return roomRepository.save(roomToSave);
+	}
+
+	@Override
+	public boolean existsRoom(String id, String password) {
+		return roomRepository.existsByIdAndPassword(id,password);
 	}
 
 
