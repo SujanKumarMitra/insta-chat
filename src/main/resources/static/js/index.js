@@ -14,12 +14,15 @@ $('#create-form-auto_generate').change(function toggleInputRoomId() {
         $('#room_id-result').prop('hidden', true);
         $('#create-form-room_id').val('****************************************************');
         $('#room_create_button').prop('disabled', false);
+        $('#room_id-result-success').prop('hidden',true);
+        $('#room_id-result-danger').prop('hidden',true);
     } else {
         $('#create-form-room_id').prop('disabled', false);
         $('#room_id-result').prop('hidden', false);
         $('#room_id-result').text('');
         $('#create-form-room_id').val('');
         $('#room_create_button').prop('disabled', true);
+        $('#room_id-result-danger').prop('hidden',false);
     }
 })
 toggleAvailable = function (result) {
@@ -77,7 +80,7 @@ $('#create-form-room_id').on("keyup", function getInputData() {
 //display result
 displayResult = function (data, status) {
     if (status == 201) {
-        var roomID = data.roomId;
+        var roomID = data.id;
         var password = data.password;
         $('#new_room_id').html(roomID);
         $('#new_room_password').html(password);
