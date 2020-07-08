@@ -3,6 +3,7 @@ package com.skmproject.chatapp.service;
 import com.skmproject.chatapp.exception.RoomAlreadyExistsException;
 import com.skmproject.chatapp.exception.RoomNotFoundException;
 import com.skmproject.chatapp.model.CreateRoom;
+import com.skmproject.chatapp.model.JoinRoom;
 import com.skmproject.chatapp.model.Room;
 
 /**
@@ -14,4 +15,9 @@ public interface RoomService {
 	public Room createRoom(CreateRoom createRoom) throws RoomAlreadyExistsException;
 
 	public Room getRoom(String roomId) throws RoomNotFoundException;
+
+	/**
+	 * @param payload
+	 */
+	public boolean verifyRoom(JoinRoom request);
 }
