@@ -104,24 +104,28 @@
 								</div>
 							</div>
 							<div class="form-bottom">
-								<form role="form" action="" method="post" class="registration-form">
+								<form role="form" action="#" th:action="@{/join}" th:object="${joinRoom}" method="post" class="registration-form">
 									<div class="form-group">
 										<label class="sr-only" for="form-room-id">Room Id</label>
 										<input type="text" name="form-room-id" placeholder="Enter Room ID"
-											class="form-first-name form-control" id="form-first-name">
+											class="form-first-name form-control" id="form-first-name" th:field ="*{id}" >
 									</div>
 									<div class="form-group">
 										<label class="sr-only" for="form-last-name">Password</label>
 										<input type="password" name="form-last-name" placeholder="Enter Password"
-											class="form-last-name form-control" id="form-last-name">
+											class="form-last-name form-control" id="form-last-name" th:field="*{password}" >
 									</div>
 									<div class="form-group">
 										<label class="sr-only" for="form-name">Join As</label>
 										<input type="text" name="form-name" placeholder="Join As"
-											class="form-last-name form-control" id="form-name">
+											class="form-last-name form-control" id="form-name" th:field=*{username}>
 									</div>
 									<button type="submit" class="btn">Join</button>
 								</form>
+								<br/>
+								<div id="result" th:if="${error}" class="alert alert-danger text-center" role="alert">
+									<div id="error_message" th:text="${message}">Room Not Found!!</div>
+								</div>
 							</div>
 						</div>
 
