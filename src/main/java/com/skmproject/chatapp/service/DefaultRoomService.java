@@ -36,7 +36,7 @@ public class DefaultRoomService implements RoomService {
 		if(createRoom.isAutoGenerate()) {
 			roomId = randomGenerator.generateRandom();
 		} else {
-			roomId = createRoom.getRoomId();
+			roomId = createRoom.getId();
 			if (roomDao.existsRoom(roomId)) {
 				throw new RoomAlreadyExistsException(roomId + " already exists!");
 			}
