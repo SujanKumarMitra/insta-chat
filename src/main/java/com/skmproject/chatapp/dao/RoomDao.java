@@ -12,4 +12,7 @@ public interface RoomDao {
 	Room save(Room room);
 
 	Room getRoom(String roomId);
+
+	
+	boolean existsRoom(String id, String password);
 }
