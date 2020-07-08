@@ -6,22 +6,22 @@ package com.skmproject.chatapp.model;
  */
 public class CreateRoom {
 
-	private String roomId;
+	private String id;
 	private String password;
 	private boolean autoGenerate;
 
 	/**
 	 * @return the roomId
 	 */
-	public String getRoomId() {
-		return roomId;
+	public String getId() {
+		return id;
 	}
 
 	/**
 	 * @param roomId the roomId to set
 	 */
-	public void setRoomId(String roomId) {
-		this.roomId = roomId;
+	public void setId(String roomId) {
+		this.id = roomId;
 	}
 
 	/**
@@ -54,7 +54,7 @@ public class CreateRoom {
 
 	@Override
 	public String toString() {
-		return "CreateRoom [roomId=" + roomId + ", password=" + password + ", autoGenerate=" + autoGenerate + "]";
+		return "CreateRoom [id=" + id + ", password=" + password + ", autoGenerate=" + autoGenerate + "]";
 	}
 	
 }
