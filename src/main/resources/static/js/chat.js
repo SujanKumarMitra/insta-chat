@@ -65,11 +65,8 @@ onNewMessage = function (response) {
 }
 
 displayMessage = function (message) {
-    console.log(message.from);
-    console.log(getUser());
     if(message.from.sessionId != getUser().sessionId) {
         console.log("message");
-        
         var template = getNewReceiveMessageTemplate(message.from.username,message.content);
         $('#messages').append(template);
     }
@@ -87,10 +84,14 @@ handleEvent = function (event) {
     switch (event.type) {
         case "JOIN":
             participants.append(getNewUserTemplate(user.username,user.sessionId));
+            var template = getNewReceiveMessageTemplate(user.username,user.username + " joined");
+            $('#messages').append(template);
             break;
         case "LEAVE":
             sessionId =user.sessionId;
             $('#'+sessionId).remove();
+            var template = getNewReceiveMessageTemplate(user.username,user.username + " left");
+            $('#messages').append(template);
             break;
         case "TYPING":
             $('#'+user.sessionId).find("p").prop("hidden",false);
@@ -105,6 +106,7 @@ handleEvent = function (event) {
 
 onConnected = function (frame) {
     stomp.subscribe("/messages/" + roomID, onNewMessage, {username: username});
+    getUser();
     stomp.subscribe("/events/" + roomID, onNewEvent);
 }
 getNewReceiveMessageTemplate = function (username, content) {
@@ -163,14 +165,6 @@ sendMessage = function() {
     $('#messages').append(template);
 }
 
-var url = baseURL + "chat";
-socket = new SockJS(url);
-getOnlineUsers(roomID);
-onlineUsers.forEach(function (user, index) {
-    participants.append(getNewUserTemplate(user.username,user.sessionId));
-})
-stomp = Stomp.over(socket);
-stomp.connect({}, onConnected);
 //send event
 $('#send_button').on("click",sendMessage);
 $("#message_box").keypress(function (e) {
@@ -190,3 +184,12 @@ sendEvent = function(event) {
     payload = JSON.stringify({type:event,user:user});
     stomp.send("/events/"+roomID,{},payload);
 }
+
+var url = baseURL + "chat";
+socket = new SockJS(url);
+getOnlineUsers(roomID);
+onlineUsers.forEach(function (user, index) {
+    participants.append(getNewUserTemplate(user.username,user.sessionId));
+})
+stomp = Stomp.over(socket);
+stomp.connect({}, onConnected);

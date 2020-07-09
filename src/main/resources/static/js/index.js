@@ -1,7 +1,7 @@
 const baseURL = "https://insta-chat-app.herokuapp.com/";
 // const baseURL = "../static";
 init = function () {
-    $.backstretch(baseURL + "/img/backgrounds/1.jpg");
+    $.backstretch(baseURL + "img/backgrounds/1.jpg");
     // $('#room_id-result-success').hide();
     // $('#room_id-result-danger').hide();
     // $('#result').hide();
