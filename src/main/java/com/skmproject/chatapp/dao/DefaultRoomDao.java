@@ -4,8 +4,10 @@ import java.util.List;
 import java.util.Optional;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Repository;
 
 import com.skmproject.chatapp.dao.repository.RoomRepository;
@@ -42,10 +44,10 @@ public class DefaultRoomDao implements RoomDao {
 	public Room getRoom(String roomId) {
 		
 		return cachedRoomRepository
-		.parallelStream()
-		.filter(room -> room.getId().equals(roomId))
-		.findFirst()
-		.orElseThrow(() -> new RoomNotFoundException("room not found with id " + roomId));
+				.parallelStream()
+				.filter(room -> room.getId().equals(roomId))
+				.findFirst()
+				.orElseThrow(() -> new RoomNotFoundException("room not found with id " + roomId));
 	}
 
 	@Override
@@ -58,15 +60,25 @@ public class DefaultRoomDao implements RoomDao {
 	@Override
 	public boolean existsRoom(String id, String password) {
 		return cachedRoomRepository
-		.parallelStream()
-		.filter(room-> room.getId().equals(id) && room.getPassword().equals(password))
-		.findFirst()
-		.isPresent();
+				.parallelStream()
+				.filter(room-> room.getId().equals(id) && room.getPassword().equals(password))
+				.findFirst()
+				.isPresent();
 	}
 
 	@PostConstruct
 	private void init() {
 		cachedRoomRepository = roomRepository.findAll();
+	}
+	
+	@PreDestroy
+	private void destroy() {
+		roomRepository.saveAll(cachedRoomRepository);
+	}
+	
+	@Scheduled(cron = "0 */30 * ? * *")
+	protected void cacheRefresh() {
+		roomRepository.saveAll(cachedRoomRepository);
 	}
 
 }
