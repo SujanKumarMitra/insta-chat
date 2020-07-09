@@ -1,8 +1,5 @@
 package com.skmproject.chatapp.model;
 
-import java.util.LinkedHashSet;
-import java.util.Set;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
@@ -13,7 +10,7 @@ public class User {
 	String sessionId;
 	String username;
 	@JsonIgnore
-	Set<Room> rooms;
+	Room room;
 
 	/**
 	 * 
@@ -62,23 +59,19 @@ public class User {
 	public void setUsername(String username) {
 		this.username = username;
 	}
-	
-	public void addRoom(Room room) {
-		if(rooms == null) {
-			rooms = new LinkedHashSet<>();
-		}
-		rooms.add(room);
-	}
-	
-	public Set<Room> getRooms() {
-		return rooms;
-	}
 
 	/**
 	 * @param rooms the rooms to set
 	 */
-	public void setRooms(Set<Room> rooms) {
-		this.rooms = rooms;
+	public void setRoom(Room room) {
+		this.room = room;
+	}
+
+	/**
+	 * @return the room
+	 */
+	public Room getRoom() {
+		return room;
 	}
 
 	@Override
