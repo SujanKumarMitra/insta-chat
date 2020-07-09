@@ -78,7 +78,7 @@ public class DefaultRoomDao implements RoomDao {
 	
 	@Scheduled(cron = "0 */30 * ? * *")
 	protected void cacheRefresh() {
-		roomRepository.saveAll(cachedRoomRepository);
+		cachedRoomRepository = roomRepository.saveAll(cachedRoomRepository);
 	}
 
 }
