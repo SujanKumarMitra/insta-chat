@@ -40,11 +40,15 @@ public class RoomResource {
 	}
 
 	@GetMapping("/room/{roomId}")
-	public ResponseEntity<Room> getRoom(@PathVariable("roomId") String roomId) {
-		Room room = roomService.getRoom(roomId);
-		return ResponseEntity
-				.status(HttpStatus.FOUND)
-				.body(room);
+	public ResponseEntity<Void> getRoom(@PathVariable("roomId") String roomId) {
+		boolean result = roomService.existsRoom(roomId);
+		if(result) {
+			return ResponseEntity
+					.status(HttpStatus.FOUND)
+					.build();
+		} else {
+			return ResponseEntity.notFound().build();
+		}
 	}
 	
 	@GetMapping("/room/{roomId}/user")

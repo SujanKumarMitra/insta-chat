@@ -1,5 +1,10 @@
 package com.skmproject.chatapp.dao;
 
+import java.util.List;
+import java.util.Optional;
+
+import javax.annotation.PostConstruct;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -15,30 +20,53 @@ import com.skmproject.chatapp.model.Room;
 @Repository
 public class DefaultRoomDao implements RoomDao {
 
+	List<DefaultRoom> cachedRoomRepository;
+
 	@Autowired
 	private RoomRepository roomRepository;
 
+	public DefaultRoomDao() {
+	}
+
 	@Override
 	public boolean existsRoom(String roomId) {
-		return roomRepository.existsById(roomId);
+
+		Optional<DefaultRoom> optionalRoom = cachedRoomRepository
+				.parallelStream()
+				.filter(room -> room.getId().equals(roomId)).findFirst();
+
+		return optionalRoom.isPresent();
 	}
 
 	@Override
 	public Room getRoom(String roomId) {
-		return roomRepository.findById(roomId)
-				.orElseThrow(() -> new RoomNotFoundException("room not found with id " + roomId));
+		
+		return cachedRoomRepository
+		.parallelStream()
+		.filter(room -> room.getId().equals(roomId))
+		.findFirst()
+		.orElseThrow(() -> new RoomNotFoundException("room not found with id " + roomId));
 	}
 
 	@Override
 	public Room save(Room room) {
 		DefaultRoom roomToSave = (DefaultRoom) room;
-		return roomRepository.save(roomToSave);
+		cachedRoomRepository.add(roomToSave);
+		return roomToSave;
 	}
 
 	@Override
 	public boolean existsRoom(String id, String password) {
-		return roomRepository.existsByIdAndPassword(id,password);
+		return cachedRoomRepository
+		.parallelStream()
+		.filter(room-> room.getId().equals(id) && room.getPassword().equals(password))
+		.findFirst()
+		.isPresent();
 	}
 
+	@PostConstruct
+	private void init() {
+		cachedRoomRepository = roomRepository.findAll();
+	}
 
 }

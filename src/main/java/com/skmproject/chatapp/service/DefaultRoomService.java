@@ -52,4 +52,9 @@ public class DefaultRoomService implements RoomService {
 		return roomDao.existsRoom(request.getId(),request.getPassword());
 	}
 
+	@Override
+	public boolean existsRoom(String roomId) {
+		return roomDao.existsRoom(roomId);
+	}
+
 }

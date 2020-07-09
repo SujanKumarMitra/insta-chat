@@ -15,6 +15,8 @@ public interface RoomService {
 	public Room createRoom(CreateRoom createRoom) throws RoomAlreadyExistsException;
 
 	public Room getRoom(String roomId) throws RoomNotFoundException;
+	
+	public boolean existsRoom(String roomId);
 
 	/**
 	 * @param payload
