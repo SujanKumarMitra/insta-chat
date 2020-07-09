@@ -128,9 +128,28 @@ public class OnlineTrackerService {
 	}
 
 	/**
-	 * @param username
+	 * @param sessionId
 	 */
-	public synchronized User getUser(String username) {
+	public synchronized User getUserFromSession(String sessionId) {
+		if (txFlag) {
+			try {
+				wait();
+			} catch (Exception e) {
+				logger.warn(e.getMessage());
+			}
+		}
+		for (Entry<String, Set<User>> entry : onlineUsers.entrySet()) {
+			Set<User> users = entry.getValue();
+			for (User user : users) {
+				if (user.getSessionId().equals(sessionId)) {
+					return user;
+				}
+			}
+		}
+		return null;
+	}
+	
+	public synchronized User getUserFromUsername(String username) {
 		if (txFlag) {
 			try {
 				wait();

@@ -23,7 +23,7 @@ public class UserResource {
 	
 	@GetMapping("/user/{username}")
 	public ResponseEntity<User> getUser(@PathVariable("username") String username) {
-		User user = trackerService.getUser(username);
+		User user = trackerService.getUserFromSession(username);
 		if(user == null) {
 			return ResponseEntity.notFound().build();
 		} else {

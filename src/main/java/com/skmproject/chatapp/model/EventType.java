@@ -7,7 +7,8 @@ package com.skmproject.chatapp.model;
 public enum EventType {
 	JOIN("JOIN"),
 	LEAVE("LEAVE"),
-	TYPING("TYPING");
+	TYPING("TYPING"),
+	INFO("DATA");
 
 	String event;
 	/**

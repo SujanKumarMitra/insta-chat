@@ -1,7 +1,7 @@
 var username = $('#username').text();
 var roomID = $('#room_id').text();
 var participants = $('.contacts');
-const baseURL = "https://insta-chat-app.herokuapp.com/";
+const baseURL = "http://localhost:8080/";
 var socket = null;
 var stomp = null;
 var onlineUsers = [];
@@ -29,26 +29,9 @@ getOnlineUsers = function (roomId) {
     }
 }
 
-setUser = function () {
-    var url = baseURL + "api/user/" + username;
-    var method = "GET";
-    var shouldBeAsync = false;
-
-    var request = new XMLHttpRequest();
-    request.onload = function () {
-        var status = request.status;
-        if (status == 200) {
-            var body = request.response;
-            currentUser = JSON.parse(body);
-        }
-    }
-    request.open(method, url, shouldBeAsync);
-    // request.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
-    try {
-        request.send();
-    } catch (error) {
-        console.log(error);
-    }
+setUser = function (user) {
+    currentUser = user;
+    $('#current_user').attr("id",currentUser.sessionId);
 }
 getUser = function () {
 
@@ -80,6 +63,9 @@ onNewEvent = function (response) {
 }
 
 handleEvent = function (event) {
+	if(typeof(event.body) != "undefined") {
+		event = event.body;
+	}
     user = event.user;
     switch (event.type) {
         case "JOIN":
@@ -99,6 +85,9 @@ handleEvent = function (event) {
                 $('#'+user.sessionId).find("p").prop("hidden",true);
             },750);
             break;
+        case "INFO":
+        	setUser(user);
+        	break;
         default:
             break;
     }
@@ -106,7 +95,6 @@ handleEvent = function (event) {
 
 onConnected = function (frame) {
     stomp.subscribe("/messages/" + roomID, onNewMessage, {username: username});
-    getUser();
     stomp.subscribe("/events/" + roomID, onNewEvent);
 }
 getNewReceiveMessageTemplate = function (username, content) {
