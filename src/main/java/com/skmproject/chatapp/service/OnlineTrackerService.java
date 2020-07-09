@@ -6,17 +6,16 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.context.event.EventListener;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageHeaders;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
-import org.springframework.messaging.support.MessageHeaderAccessor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.socket.messaging.SessionDisconnectEvent;
-import org.springframework.web.socket.messaging.SessionSubscribeEvent;
 
 import com.skmproject.chatapp.model.Event;
 import com.skmproject.chatapp.model.EventType;
@@ -33,12 +32,16 @@ public class OnlineTrackerService {
 
 	private Map<String, Set<User>> onlineUsers;
 	
+	private boolean txFlag;
+	
 	@Autowired
 	private RoomService roomService;
 
 	@Autowired
 	@Lazy
 	SimpMessagingTemplate messagingTemplate;
+	
+	private Logger logger = LoggerFactory.getLogger(getClass());
 
 	/**
 	 * @param onlineUsers
@@ -50,21 +53,37 @@ public class OnlineTrackerService {
 	/**
 	 * @return the onlineUsers
 	 */
-	public Set<User> getOnlineUsers(String roomId) {
+	public synchronized Set<User> getOnlineUsers(String roomId) {
+		if(txFlag) {
+			try {
+				wait();
+			} catch (InterruptedException e) {
+				logger.warn(e.getMessage());
+			}
+		}
 		return onlineUsers.get(roomId);
 	}
 
-	public User addOnlineUser(String roomId, String sessionId, String username) {
+	public synchronized User addOnlineUser(String roomId, String sessionId, String username) {
+		txFlag = true;
 		User user = getUser(sessionId, username,roomId);
 		Set<User> users = onlineUsers.get(roomId);
 		if (users == null) {
 			users = new LinkedHashSet<>();
 			onlineUsers.put(roomId, users);
 		}
-		return (users.add(user)) ? user : null;
+		boolean result = users.add(user);
+		txFlag = false;
+		notify();
+		if(result) {
+			notifyOnline(user);
+			return user;
+		}
+		return null;
 	}
 
-	public User removeOnlineUser(String sessionId) {
+	public synchronized User removeOnlineUser(String sessionId) {
+		txFlag = true;
 		User userToRemove = null;
 		for (Entry<String, Set<User>> entry : onlineUsers.entrySet()) {
 			Set<User> users = entry.getValue();
@@ -79,7 +98,8 @@ public class OnlineTrackerService {
 				break;
 			}
 		}
-
+		txFlag = false;
+		notify();
 		return userToRemove;
 	}
 
@@ -90,47 +110,20 @@ public class OnlineTrackerService {
 		return user;
 	}
 
-	@EventListener(classes = SessionSubscribeEvent.class)
-	public void onSubscribe(SessionSubscribeEvent event) {
-		Message<byte[]> message = event.getMessage();
-		if (!isSubscribeToMessageDestination(message)) {
-			return;
-		}
-		String sessionId = getSessionId(message);
-		String roomId = getRoomId(message);
-		String username = getUsername(message);
-		User user = addOnlineUser(roomId, sessionId, username);
-		messagingTemplate.convertAndSend(DestinationConstants.EVENT_DESTINATION + roomId, new Event(EventType.JOIN, user));
+	public void notifyOnline(User user) {
+		user.getRooms().forEach(room -> {
+			messagingTemplate.convertAndSend(DestinationConstants.EVENT_DESTINATION + room.getId(), new Event(EventType.JOIN, user));			
+		});
 	}
 
 	@EventListener(classes = SessionDisconnectEvent.class)
-	public void onDisconnect(SessionDisconnectEvent event) {
+	public void notifyOffline(SessionDisconnectEvent event) {
 		String sessionId = event.getSessionId();
 		User user = removeOnlineUser(sessionId);
 		Set<Room> rooms = user.getRooms();
 		rooms.forEach(room -> {
 			messagingTemplate.convertAndSend(DestinationConstants.EVENT_DESTINATION + room.getId(), new Event(EventType.LEAVE, user));			
 		});
-	}
-
-	public String getSessionId(Message<?> message) {
-		MessageHeaders headers = message.getHeaders();
-		Object sessionId = headers.get("simpSessionId");
-		return (String) sessionId;
-	}
-
-	public String getRoomId(Message<?> message) {
-		MessageHeaders headers = message.getHeaders();
-		String destination = (String) headers.get("simpDestination");
-		return destination.substring(DestinationConstants.MESSAGE_DESTINATION.length());
-
-	}
-
-	public String getUsername(Message<?> message) {
-		StompHeaderAccessor accessor = MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
-		String username = accessor.getFirstNativeHeader("username");
-		return username;
-
 	}
 
 	public boolean isSubscribeToMessageDestination(Message<?> message) {
@@ -142,7 +135,14 @@ public class OnlineTrackerService {
 	/**
 	 * @param username
 	 */
-	public User getUser(String username) {
+	public synchronized User getUser(String username) {
+		if (txFlag) {
+			try {
+				wait();
+			} catch (Exception e) {
+				logger.warn(e.getMessage());
+			}
+		}
 		for (Entry<String, Set<User>> entry : onlineUsers.entrySet()) {
 			Set<User> users = entry.getValue();
 			for (User user : users) {
