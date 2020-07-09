@@ -1,4 +1,4 @@
-const baseURL = "http://localhost:8080/";
+const baseURL = "https://insta-chat-app.herokuapp.com/";
 // const baseURL = "../static";
 init = function () {
     $.backstretch(baseURL + "/img/backgrounds/1.jpg");
