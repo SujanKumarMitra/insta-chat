@@ -39,7 +39,7 @@ public class OnlineTrackerService {
 
 	@Autowired
 	@Lazy
-	SimpMessagingTemplate messagingTemplate;
+	private SimpMessagingTemplate messagingTemplate;
 	
 	private Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -74,7 +74,7 @@ public class OnlineTrackerService {
 		}
 		boolean result = users.add(user);
 		txFlag = false;
-		notify();
+		notifyAll();
 		if(result) {
 			notifyOnline(user);
 			return user;
@@ -99,31 +99,26 @@ public class OnlineTrackerService {
 			}
 		}
 		txFlag = false;
-		notify();
+		notifyAll();
 		return userToRemove;
 	}
 
 	private User getUser(String sessionId, String username,String roomId) {
 		User user = new User(sessionId, username);
 		Room room = roomService.getRoom(roomId);
-		user.addRoom(room);
+		user.setRoom(room);
 		return user;
 	}
 
 	public void notifyOnline(User user) {
-		user.getRooms().forEach(room -> {
-			messagingTemplate.convertAndSend(DestinationConstants.EVENT_DESTINATION + room.getId(), new Event(EventType.JOIN, user));			
-		});
+		messagingTemplate.convertAndSend(DestinationConstants.EVENT_DESTINATION + user.getRoom().getId(), new Event(EventType.JOIN, user));			
 	}
 
 	@EventListener(classes = SessionDisconnectEvent.class)
 	public void notifyOffline(SessionDisconnectEvent event) {
 		String sessionId = event.getSessionId();
 		User user = removeOnlineUser(sessionId);
-		Set<Room> rooms = user.getRooms();
-		rooms.forEach(room -> {
-			messagingTemplate.convertAndSend(DestinationConstants.EVENT_DESTINATION + room.getId(), new Event(EventType.LEAVE, user));			
-		});
+		messagingTemplate.convertAndSend(DestinationConstants.EVENT_DESTINATION + user.getRoom().getId(), new Event(EventType.LEAVE, user));			
 	}
 
 	public boolean isSubscribeToMessageDestination(Message<?> message) {

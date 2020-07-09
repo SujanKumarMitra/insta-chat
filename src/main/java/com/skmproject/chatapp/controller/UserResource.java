@@ -19,7 +19,7 @@ import com.skmproject.chatapp.service.OnlineTrackerService;
 public class UserResource {
 	
 	@Autowired
-	OnlineTrackerService trackerService;
+	private OnlineTrackerService trackerService;
 	
 	@GetMapping("/user/{username}")
 	public ResponseEntity<User> getUser(@PathVariable("username") String username) {
